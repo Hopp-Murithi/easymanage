@@ -16,7 +16,6 @@
     $period = '';
 
 
-
     if ($current_hour >= 5 && $current_hour < 12) {
       $period = 'Morning';
     } elseif ($current_hour >= 12 && $current_hour < 18) {

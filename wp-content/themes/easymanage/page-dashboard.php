@@ -2,6 +2,7 @@
 <?php get_sidebar() ?>
 <div class="main" ><h1>Hello there</h1></div>
 
+
 <style>
     .main{
         width: 100%;

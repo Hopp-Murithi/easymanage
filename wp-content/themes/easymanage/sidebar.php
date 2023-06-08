@@ -129,7 +129,6 @@ if (in_array('administrator', $user_roles)) {
     margin-left:-12px;
   }
   
-
   .logout-text:hover{
     color:red
   }
