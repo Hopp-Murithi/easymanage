@@ -1,5 +1,4 @@
 <?php 
-
 //
 function easyManage_script_enqueue(){
     wp_enqueue_style('customstyle', get_template_directory_uri().'/custom/styles.css', [], '3.1.1', 'all');

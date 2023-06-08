@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
 <style>
     .logo {
         font-size: 34px;
