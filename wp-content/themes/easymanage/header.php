@@ -24,8 +24,7 @@
 
     .search {
         margin-right: 15rem;
-        display: flex;
-        
+        display: flex; 
         align-items: center;
     }
 
@@ -50,8 +49,8 @@
     }
 
     .search-button {
-        height: 34px;
-        padding: 4px 8px;
+        height: 32px;
+        padding: 4px 4px;
         font-size: 16px;
     }
 </style>

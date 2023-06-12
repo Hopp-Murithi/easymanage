@@ -23,4 +23,37 @@ function custom_logout_redirect() {
 }
 add_action('wp_logout', 'custom_logout_redirect');
 
+// Add new user roles
+function add_custom_roles() {
+    add_role(
+        'trainer',
+        __( 'Trainer' ),
+        array(
+            'read'         => true,
+            'edit_posts'   => true,
+            'delete_posts' => true,
+        )
+    );
+    
+    add_role(
+        'trainee',
+        __( 'Trainee' ),
+        array(
+            'read'         => true,
+            'edit_posts'   => false,
+            'delete_posts' => false,
+        )
+    );
+    
+    add_role(
+        'program_manager',
+        __( 'Program Manager' ),
+        array(
+            'read'         => true,
+            'edit_posts'   => true,
+            'delete_posts' => true,
+        )
+    );
+}
+add_action( 'init', 'add_custom_roles' );
 

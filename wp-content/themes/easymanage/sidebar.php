@@ -6,23 +6,24 @@ $user_roles = $user->roles;
 
 // Define menu options based on user roles
 $admin_menu = array(
-  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => '#'),
-  array('icon' => 'bi bi-person-plus', 'text' => 'Add Program Manager', 'link' => '#'),
-  array('icon' => 'bi bi-people', 'text' => 'View All Members', 'link' => '#'),
-  array('icon' => 'bi bi-file-earmark-text', 'text' => 'View All Projects', 'link' => '#'),
+  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/dashboard/'),
+  array('icon' => 'bi bi-person-plus', 'text' => 'Add Program Manager', 'link' => 'http://localhost/easymanage/create-manager/'),
+  array('icon' => 'bi bi-people', 'text' => 'View All Members', 'link' => 'http://localhost/easymanage/view-members/'),
+  array('icon' => 'bi bi-file-earmark-text', 'text' => 'View All Projects', 'link' => 'http://localhost/easymanage/view-all-projects/'),
   array('icon' => 'bi bi-gear', 'text' => 'Admin Panel', 'link' => 'http://localhost/easymanage/wp-admin/')
 );
 
 $program_manager_menu = array(
-  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => '#'),
-  array('icon' => 'bi bi-person-plus', 'text' => 'Add Trainer', 'link' => '#'),
-  array('icon' => 'bi bi-people', 'text' => 'View All Members', 'link' => '#'),
-  array('icon' => 'bi bi-file-earmark-text', 'text' => 'View All Projects', 'link' => '#')
+  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/dashboard/'),
+  array('icon' => 'bi bi-person-plus', 'text' => 'Add Trainer', 'link' => 'http://localhost/easymanage/create-trainer/'),
+  array('icon' => 'bi bi-bag-plus-fill', 'text' => 'Create Program', 'link' => 'http://localhost/easymanage/create-program/'),
+  array('icon' => 'bi bi-people', 'text' => 'View All Members', 'link' => 'http://localhost/easymanage/view-members/'),
+  array('icon' => 'bi bi-file-earmark-text', 'text' => 'View All Projects', 'link' => 'http://localhost/easymanage/view-all-projects/')
 );
 
 $trainer_menu = array(
-  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => '#'),
-  array('icon' => 'bi bi-person-plus', 'text' => 'Add Trainee', 'link' => '#'),
+  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/dashboard/'),
+  array('icon' => 'bi bi-person-plus', 'text' => 'Add Trainee', 'link' => 'http://localhost/easymanage/create-trainee/'),
   array('icon' => 'bi bi-people', 'text' => 'View Team Members', 'link' => '#'),
   array('icon' => 'bi bi-file-earmark-text', 'text' => 'View Team Projects', 'link' => '#'),
   array('icon' => 'bi bi-file-earmark-plus', 'text' => 'Create New Project', 'link' => '#')
@@ -48,7 +49,7 @@ if (in_array('administrator', $user_roles)) {
 
 ?>
 
-<div class="container">
+<div class="">
   <div class="row">
     <div class="col-md-3 p-0">
       <!-- Sidebar -->
@@ -113,6 +114,9 @@ if (in_array('administrator', $user_roles)) {
   }
 
   .menu-link:hover {
+    color: #000000;
+  }
+  .menu-text:active {
     color: #000000;
   }
 
