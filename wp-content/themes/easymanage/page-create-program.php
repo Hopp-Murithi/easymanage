@@ -60,7 +60,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #D7DCE2;
+        background-color: #EBF0FF;
         width: 50%;
         height: 40vh;
         border-radius: 10px;

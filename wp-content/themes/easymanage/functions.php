@@ -11,6 +11,7 @@ function easyManage_script_enqueue(){
 
     wp_register_script('jsbootstrap','https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js', [], '5.2.3', false);
     wp_enqueue_script ('jsbootstrap');
+    wp_enqueue_script('jquery');
 }
 
 add_action('wp_enqueue_scripts', 'easyManage_script_enqueue');
@@ -57,3 +58,45 @@ function add_custom_roles() {
 }
 add_action( 'init', 'add_custom_roles' );
 
+function display_table_shortcode() {
+    ob_start();
+    ?>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><i class="bi bi-person-circle text-dark"></i> John Doe</td>
+                    <td>johndoe@example.com</td>
+                    <td>program Managerr</td>
+                    <td><span class="badge bg-success text-white">Active</span></td>
+                    <td>
+                    <i class="bi bi-pencil-square text-dark"></i> <!-- Update icon -->
+                        <i class="bi bi-square-fill text-danger"></i> <!-- Deactivate icon -->
+                    </td>
+                </tr>
+                <tr>
+                    <td><i class="bi bi-person-circle text-dark"></i> Jane Smith</td>
+                    <td>janesmith@example.com</td>
+                    <td>Program manager</td>
+                    <td><span class="badge bg-success text-white">Active</span></td>
+                    <td>
+                       <a href="#"><i class="bi bi-pencil-square text-dark"></i> </a> 
+                       <a><i class="bi bi-square-fill text-danger"></i> </a> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('display_table', 'display_table_shortcode');

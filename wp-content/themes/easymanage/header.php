@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
+    
     <title>EasyManage</title>
     <?php wp_head() ?>
 </head>
@@ -47,7 +48,12 @@
         padding: 4px 8px;
         font-size: 16px;
     }
-
+nav{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+nav:hover{
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
     .search-button {
         height: 32px;
         padding: 4px 4px;

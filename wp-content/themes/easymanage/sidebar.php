@@ -24,14 +24,14 @@ $program_manager_menu = array(
 $trainer_menu = array(
   array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/dashboard/'),
   array('icon' => 'bi bi-person-plus', 'text' => 'Add Trainee', 'link' => 'http://localhost/easymanage/create-trainee/'),
-  array('icon' => 'bi bi-people', 'text' => 'View Team Members', 'link' => '#'),
-  array('icon' => 'bi bi-file-earmark-text', 'text' => 'View Team Projects', 'link' => '#'),
-  array('icon' => 'bi bi-file-earmark-plus', 'text' => 'Create New Project', 'link' => '#')
+  array('icon' => 'bi bi-people', 'text' => 'View Team Members', 'link' => 'http://localhost/easymanage/view-members/'),
+  array('icon' => 'bi bi-file-earmark-text', 'text' => 'View Team Projects', 'link' => 'http://localhost/easymanage/view-all-projects/'),
+  array('icon' => 'bi bi-file-earmark-plus', 'text' => 'Create New Project', 'link' => 'http://localhost/easymanage/create-project/')
 );
 
 $trainee_menu = array(
-  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => '#'),
-  array('icon' => 'bi bi-file-earmark-check', 'text' => 'Completed Projects', 'link' => '#')
+  array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/view-all-projects/'),
+  array('icon' => 'bi bi-file-earmark-check', 'text' => 'Completed Projects', 'link' => 'http://localhost/easymanage/view-all-projects/')
 );
 
 $menu_options = array();
