@@ -1,0 +1,19 @@
+{
+    "name": "hopp/easy-manage",
+    "description": "A plugin to manage different users and events in a training management system",
+    "type": "project",
+    "license": "GPLv2 or later",
+    "authors": [
+        {
+            "name": "Hopp-Murithi",
+            "email": "hoppmurithi@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Inc\\": "inc/"
+        }
+    }
+}
