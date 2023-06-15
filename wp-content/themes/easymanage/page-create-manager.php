@@ -28,7 +28,7 @@
             ?>
             <div>
                 <label for="name">Name</label>
-                <input type="text" id='name' name="name" />
+                <input type="text" id='name' name="managername" />
             </div>
             <div>
                 <label for="email">Email</label>

@@ -13,7 +13,6 @@ class Init
     {
         return [
             Pages\PMroutes::class,
-           
         ];
     }
 

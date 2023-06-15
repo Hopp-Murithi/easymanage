@@ -45,7 +45,6 @@ register_activation_hook(__FILE__, 'activate_easymanage_plugin');
 register_deactivation_hook(__FILE__, 'deactivate_easymanage_plugin');
 
 // to add the plugin services
-
 if (class_exists('Inc\\Init')) {
     Init::register_services();
 }
