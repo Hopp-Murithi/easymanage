@@ -20,24 +20,24 @@ class PMroutes
         register_rest_route('easymanage/v2', '/manager', array(
             'methods' => 'POST',
             'callback' => array($this, 'create_manager'),
-            'permission_callback' => function () {
-                return current_user_can('manage_options');
-            }
+            // 'permission_callback' => function () {
+            //     return current_user_can('manage_options');
+            // }
         ));
 
         register_rest_route('easymanage/v2', '/manager/(?P<id>\d+)', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_manager'),
-            'permission_callback' => function () {
-                return current_user_can('manage_options');
-            }
+            // 'permission_callback' => function () {
+            //     return current_user_can('manage_options');
+            // }
         ));
         register_rest_route('easymanage/v2', '/manager', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_all_managers'),
-            'permission_callback' => function () {
-                return current_user_can('manage_options');
-            }
+            // 'permission_callback' => function () {
+            //     return current_user_can('manage_options');
+            // }
         ));
     }
 
