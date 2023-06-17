@@ -58,7 +58,8 @@ function add_custom_roles() {
 }
 add_action( 'init', 'add_custom_roles' );
 
-function display_table_shortcode() {
+function display_table_shortcode()
+{
     ob_start();
     ?>
     <div class="container">
@@ -73,26 +74,28 @@ function display_table_shortcode() {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><i class="bi bi-person-circle text-dark"></i> John Doe</td>
-                    <td>johndoe@example.com</td>
-                    <td>program Managerr</td>
-                    <td><span class="badge bg-success text-white">Active</span></td>
-                    <td>
-                    <i class="bi bi-pencil-square text-dark"></i> <!-- Update icon -->
-                        <i class="bi bi-square-fill text-danger"></i> <!-- Deactivate icon -->
-                    </td>
-                </tr>
-                <tr>
-                    <td><i class="bi bi-person-circle text-dark"></i> Jane Smith</td>
-                    <td>janesmith@example.com</td>
-                    <td>Program manager</td>
-                    <td><span class="badge bg-success text-white">Active</span></td>
-                    <td>
-                       <a href="#"><i class="bi bi-pencil-square text-dark"></i> </a> 
-                       <a><i class="bi bi-square-fill text-danger"></i> </a> 
-                    </td>
-                </tr>
+                <?php
+                $users = get_users(); // Retrieve all users
+                foreach ($users as $user) {
+                    $name = $user->display_name;
+                    $email = $user->user_email;
+                    $role = implode(', ', $user->roles);
+                    $status = 'Active'; // Assuming all users are active
+
+                    ?>
+                    <tr>
+                        <td><i class="bi bi-person-circle text-dark"></i> <?php echo esc_html($name); ?></td>
+                        <td><?php echo esc_html($email); ?></td>
+                        <td><?php echo esc_html($role); ?></td>
+                        <td><span class="badge bg-success text-white"><?php echo esc_html($status); ?></span></td>
+                        <td>
+                            <a href="#"><i class="bi bi-pencil-square text-dark"></i> </a>
+                            <a><i class="bi bi-square-fill text-danger"></i> </a>
+                        </td>
+                    </tr>
+                <?php
+                }
+                ?>
             </tbody>
         </table>
     </div>
