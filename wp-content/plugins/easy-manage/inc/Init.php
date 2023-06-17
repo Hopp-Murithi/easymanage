@@ -13,6 +13,10 @@ class Init
     {
         return [
             Pages\PMroutes::class,
+            Pages\TrainerRoutes::class,
+            Pages\TraineeRoutes::class,
+            Pages\createTables::class,
+
         ];
     }
 
