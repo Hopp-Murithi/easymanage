@@ -86,13 +86,15 @@ $assignees = $assignees_query->get_results();
 
     .selectedAssignee {
         display: inline-block;
-        background-color: #e9ecef;
+        background-color: #ffffff;
         padding: 5px 10px;
         border-radius: 4px;
         margin-right: 5px;
+        margin-top: 1rem;
     }
 
     .selectedAssignee span {
+        
         margin-left: 5px;
         cursor: pointer;
     }
