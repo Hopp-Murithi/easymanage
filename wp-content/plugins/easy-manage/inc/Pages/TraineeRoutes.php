@@ -31,6 +31,18 @@ class TraineeRoutes
             'methods' => 'GET',
             'callback' => array($this, 'get_all_trainees'),
         ));
+        register_rest_route('easymanage/v2', '/trainee/(?P<id>\d+)', array(
+            'methods' => 'PUT',
+            'callback' => array($this, 'update_trainee'),
+        ));
+        
+        register_rest_route('easymanage/v2', '/trainee/(?P<id>\d+)', array(
+            'methods'  => 'DELETE',
+            'callback' => array($this, 'delete_trainee'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            }
+        ));
     }
 
     public function create_trainee($request)
@@ -61,7 +73,7 @@ class TraineeRoutes
         $trainee_id = $request->get_param('id');
         $trainee = get_user_by('ID', $trainee_id);
 
-        if (!$trainee) {
+        if (!$trainee || !in_array('trainee', $trainee->roles)) {
             return new WP_Error('404', 'Trainee not found');
         }
 
@@ -108,4 +120,54 @@ class TraineeRoutes
 
         return rest_ensure_response($response);
     }
+
+
+    public function update_trainee($request)
+{
+    $trainee_id = $request->get_param('id');
+    $trainee = get_user_by('ID', $trainee_id);
+
+    if (!$trainee || !in_array('trainee', $trainee->roles)) {
+        return new WP_Error('404', 'Trainee not found');
+    }
+
+    $data = $request->get_json_params();
+
+    // Update trainee data
+    $updated = wp_update_user(array(
+        'ID' => $trainee_id,
+        'user_login' => isset($data['traineename']) ? $data['traineename'] : $trainee->user_login,
+        'user_email' => isset($data['email']) ? $data['email'] : $trainee->user_email,
+        'meta_input' => array(
+            'phone_number' => isset($data['phone']) ? $data['phone'] : get_user_meta($trainee_id, 'phone_number', true),
+        ),
+    ));
+
+    if (is_wp_error($updated)) {
+        $error_message = $updated->get_error_message();
+        return new WP_Error('400', $error_message);
+    } else {
+        return rest_ensure_response('Trainee updated successfully');
+    }
+}
+
+      // Delete a trainee (soft-delete)
+      public function delete_trainee($request)
+      {
+          $trainee_id = $request->get_param('id');
+          $trainee = get_user_by('ID', $trainee_id);
+  
+          if (!$trainee  || !in_array('trainee', $trainee->roles)) {
+              return new WP_Error('404', 'trainee not found');
+          }
+  
+          update_user_meta($trainee_id, 'is_deleted', 1);
+  
+          $response = [
+              'status' => 'success',
+              'message' => 'trainee soft-deleted successfully',
+          ];
+  
+          return rest_ensure_response($response);
+      }
 }

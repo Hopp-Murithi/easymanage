@@ -32,12 +32,19 @@ class TrainerRoutes
             //     return current_user_can('manage_options');
             // }
         ));
-        register_rest_route('easymanage/v2', '/trainer', array(
+        register_rest_route('easymanage/v2', '/trainers', array(
             'methods' => 'GET',
             'callback' => array($this, 'get_all_trainers'),
             // 'permission_callback' => function () {
             //     return current_user_can('manage_options');
             // }
+        ));
+        register_rest_route('easymanage/v2', '/trainer/(?P<id>\d+)', array(
+            'methods'  => 'DELETE',
+            'callback' => array($this, 'delete_trainer'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            }
         ));
     }
 
@@ -72,7 +79,7 @@ class TrainerRoutes
         $trainer_id = $request->get_param('id');
         $trainer = get_user_by('ID', $trainer_id);
 
-        if (!$trainer) {
+        if (!$trainer || !in_array('trainer', $trainer->roles)) {
             return new WP_Error('404', 'trainer not found');
         }
 
@@ -96,7 +103,7 @@ class TrainerRoutes
     //get all trainers
     public function get_all_trainers($request)
     {
-        $trainers = get_users(array('role' => 'program_trainer'));
+        $trainers = get_users(array('role' => 'trainer'));
 
         $response = array();
 
@@ -120,4 +127,23 @@ class TrainerRoutes
 
         return rest_ensure_response($response);
     }
-}
+     // Delete a trainer (soft-delete)
+     public function delete_trainer($request)
+     {
+         $trainer_id = $request->get_param('id');
+         $trainer = get_user_by('ID', $trainer_id);
+ 
+         if (!$trainer  || !in_array('trainer', $trainer->roles)) {
+             return new WP_Error('404', 'trainer not found');
+         }
+ 
+         update_user_meta($trainer_id, 'is_deleted', 1);
+ 
+         $response = [
+             'status' => 'success',
+             'message' => 'trainer soft-deleted successfully',
+         ];
+ 
+         return rest_ensure_response($response);
+     }
+}  

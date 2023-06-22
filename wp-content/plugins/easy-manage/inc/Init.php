@@ -16,6 +16,8 @@ class Init
             Pages\TrainerRoutes::class,
             Pages\TraineeRoutes::class,
             Pages\createTables::class,
+            Pages\cohortRoutes::class,
+            Pages\projectRoutes::class,
 
         ];
     }
