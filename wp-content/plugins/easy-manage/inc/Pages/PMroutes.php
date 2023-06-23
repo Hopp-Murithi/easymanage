@@ -81,7 +81,6 @@ class PMroutes
     }
 
     // Get a single manager
-    // Get a single manager
     public function get_manager($request)
     {
         $manager_id = $request->get_param('id');

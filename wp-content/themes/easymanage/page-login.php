@@ -58,26 +58,28 @@ if (is_user_logged_in()) {
 }
 
 if (isset($_POST['login'])) {
-    $employee_id = $_POST['email'];
+    $employee_email = $_POST['email'];
     $user_password = $_POST['password'];
 
     // Validate fields
-    if (empty($employee_id) || empty($user_password)) {
+    if (empty($employee_email) || empty($user_password)) {
         $error_message = "Email and password are required.";
     } else {
         // Call the track_login_attempts function passing the username and password
-        track_login_attempts($employee_id, $user_password);
+        track_login_attempts($employee_email, $user_password);
 
-        $user = get_user_by('email', $employee_id);
+        $user = get_user_by('email', $employee_email);
 
         if (!$user) {
             $error_message = "Invalid user email.";
         } elseif (!wp_check_password($user_password, $user->user_pass, $user->ID)) {
             $error_message = "Invalid password.";
         } else {
+            setcookie("mycookie", "token", time() - 3600, "/" , "", 0);
             wp_set_current_user($user->ID);
             wp_set_auth_cookie($user->ID);
             do_action('wp_login', $user->user_login, $user);
+            
 
             $user_roles = $user->roles;
             $redirect_url = '';
