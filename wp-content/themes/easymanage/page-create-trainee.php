@@ -1,34 +1,69 @@
 <?php get_header() ?>
 <?php get_sidebar() ?>
 <div class="main">
-    <h1>New Trainee</h1>
-    <div class="container">
+<?php
+    global $success_msg;
 
-
-
-
-        <form style="width:100%;" method="post">
-
-
-            <?php
-
-            global $success_msg;
-
-            if ($success_msg) {
-                echo "<p id='message'>Project manager has been added successfully</p>";
-
-                echo '<script> document.getElementById("message").style.display = "flex"; </script>';
-
-                echo    '<script> 
+    if ($success_msg) {
+        echo "<p id='message'>Project manager has been added successfully</p>";
+        echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+        echo '<script> 
                 setTimeout(function(){
                     document.getElementById("message").style.display ="none";
                 }, 3000);
             </script>';
-            }
-            ?>
+    }
+
+    if (isset($_POST['submit'])) {
+        $traineename = $_POST['traineename'];
+        $email = $_POST['email'];
+        $phone = $_POST['phone'];
+
+      
+  // Create the trainer using the API endpoint
+        $body = [
+            'traineename' => $traineename,
+            'email' => $email,
+            'phone' => $phone
+        ];
+
+        $args = [
+            'body' => $body,
+            'method' => 'POST'
+        ];
+
+        $response = $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/trainee',$args );
+       
+        if (!is_wp_error($response)) {
+            $response_data = json_decode(wp_remote_retrieve_body($response), true);
+            // Display success message
+            echo '<p id="message">Trainee has been added successfully</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000); 
+                </script>';
+        } else {
+            //Display error message
+            echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000);
+                </script>';
+        }
+    }
+    ?>
+
+    <h1>New Trainee</h1>
+    <div class="container">
+
+        <form style="width:100%;" method="post">           
             <div>
                 <label for="name">Name</label>
-                <input type="text" id='name' name="name" />
+                <input type="text" id='name' name="traineename" />
             </div>
             <div>
                 <label for="email">Email</label>
@@ -38,10 +73,7 @@
                 <label for="phone">Phone Number</label>
                 <input type="number" name="phone" id='phone' />
             </div>
-            <div>
-                <label for="stack">Stack</label>
-                <input type="text" name="stack" id='stack' />
-            </div>
+         
     
             <div class="submit"> <input type="submit" name='submit' value="Create"></div>
 

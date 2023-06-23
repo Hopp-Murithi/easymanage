@@ -1,54 +1,98 @@
 <?php get_header() ?>
 <?php get_sidebar() ?>
 <div class="main">
+
     <h1>New program manager</h1>
-    <div class="container">
+    <?php
+    global $success_msg;
 
-
-
-
-        <form style="width:100%;" method="post">
-
-
-            <?php
-
-            global $success_msg;
-
-            if ($success_msg) {
-                echo "<p id='message'>Project manager has been added successfully</p>";
-
-                echo '<script> document.getElementById("message").style.display = "flex"; </script>';
-
-                echo    '<script> 
+    if ($success_msg) {
+        echo "<p id='message'>Project manager has been added successfully</p>";
+        echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+        echo '<script> 
                 setTimeout(function(){
                     document.getElementById("message").style.display ="none";
                 }, 3000);
             </script>';
-            }
-            ?>
+    }
+
+    if ( isset($_POST['submit'])) {
+        $managername = $_POST['managername'];
+        $email = $_POST['email'];
+        $phone = $_POST['phone'];
+
+        // Create the program manager using the API endpoint
+        global $wpdb;
+        $wpdb->get_results("SELECT * FROM wp_users WHERE user_login = ''");
+
+
+
+        $body = [
+            'managername' => $managername,
+            'email' => $email,
+            'phone' => $phone
+        ];
+
+        $args = array(
+            'body'        => $body,
+            'method'=> 'POST',
+            'headers'     => array(
+                'Content-Type: application/json',
+                'Authorization: Bearer '.$token
+            ),
+            // 'timeout'     => '5',
+            // 'redirection' => '5',
+            // 'cookies'     => array(),
+        );
+
+        $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/manager', $args );
+    
+// var_dump($response);
+
+        if (!is_wp_error($response)) {
+            $response_data = json_decode(wp_remote_retrieve_body($response), true);
+            // Display success message
+            echo '<p id="message">Project manager has been added successfully</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000); 
+                </script>';
+        } else {
+            //Display error message
+            echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000);
+                </script>';
+        }
+    }
+    ?>
+    <div class="container">
+
+
+        <form style="width:100%;" method="post">
             <div>
                 <label for="name">Name</label>
-                <input type="text" id='name' name="managername" />
+                <input type="text" id="name" name="managername" />
             </div>
             <div>
                 <label for="email">Email</label>
-                <input type="email" name="email" id='email' />
+                <input type="email" name="email" id="email" />
             </div>
             <div>
                 <label for="phone">Phone Number</label>
-                <input type="number" name="phone" id='phone' />
+                <input type="number" name="phone" id="phone" />
             </div>
-    
-            <div class="submit"> <input type="submit" name='submit' value="Create"></div>
-
-
+            <div class="submit">
+                <input type="submit" name="submit" value="Create">
+            </div>
         </form>
     </div>
 </div>
-
-
-</div>
-
 
 <style>
     .main {
@@ -71,9 +115,11 @@
         padding: 15px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     }
-    .container:hover{
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-}
+
+    .container:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
     h1 {
         color: #EB7017;
         display: flex;
@@ -123,7 +169,6 @@
 
     #message {
         background-color: #7AFF85;
-        ;
         color: #ffffff;
         border-radius: 5px;
         padding: 4px;
@@ -131,3 +176,5 @@
         font-weight: 400;
     }
 </style>
+
+<?php get_footer(); ?>
