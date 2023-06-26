@@ -6,7 +6,7 @@
     global $success_msg;
 
     if ($success_msg) {
-        echo "<p id='message'>Project manager has been added successfully</p>";
+        echo "<p id='message'Trainer has been added successfully</p>";
         echo '<script> document.getElementById("message").style.display = "flex"; </script>';
         echo '<script> 
                 setTimeout(function(){
@@ -32,10 +32,7 @@
 
         $args = [
             'body'        => $body,
-            'timeout'     => '5',
-            'redirection' => '5',
-            // 'headers'     => array(),
-            // 'cookies'     => array(),
+            
         ];
 
         $response = $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/trainer', $args );

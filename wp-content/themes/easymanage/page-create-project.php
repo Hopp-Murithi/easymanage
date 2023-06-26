@@ -13,21 +13,95 @@ $assignees = $assignees_query->get_results();
 
 <div class="main">
     <h1>New Project</h1>
+
+    <?php
+    global $success_msg;
+
+    if ($success_msg) {
+        echo "<p id='message'>Project manager has been added successfully</p>";
+        echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+        echo '<script> 
+                setTimeout(function(){
+                    document.getElementById("message").style.display ="none";
+                }, 3000);
+            </script>';
+    }
+
+    if ( isset($_POST['submit'])) {
+        $project_name = $_POST['project_name'];
+        $project_details = $_POST['project_details'];
+        $assigned_to = $_POST['assigned_to'];
+        $due_date = $_POST['due_date'];
+        $stack = $_POST['stack'];
+
+        // Create the program manager using the API endpoint
+        global $wpdb;
+        $wpdb->get_results("SELECT * FROM wp_users WHERE user_login = ''");
+
+
+
+        $body = [
+            'project_name' => $project_name,
+            'project_details' => $project_details,
+            'due_date' => $due_date,
+            'assigned_to' => $assigned_to,
+            'stack' => $stack,
+            
+        ];
+
+        $args = array(
+            'body'        => $body,
+            'method'=> 'POST',
+            // 'headers'     => array(
+            //     'Content-Type: application/json',
+            //     'Authorization: Bearer '.$token
+            // ),
+           
+        );
+
+        $response = wp_remote_post( 'hhttp://localhost/easymanage/wp-json/easymanage/v2/project', $args );
+    
+// var_dump($response);
+
+        if (!is_wp_error($response)) {
+            $response_data = json_decode(wp_remote_retrieve_body($response), true);
+            // Display success message
+            echo '<p id="message">Project has been added successfully</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000); 
+                </script>';
+        } else {
+            //Display error message
+            echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000);
+                </script>';
+        }
+    }
+    ?>
+
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <form class="form-cont">
                     <div class="form-group">
                         <label for="projectTitle">Project Title</label>
-                        <input type="text" class="form-control" id="projectTitle" placeholder="Enter project title" required>
+                        <input type="text"  name="project_name" class="form-control" id="projectTitle" placeholder="Enter project title" required>
                     </div>
                     <div class="form-group">
-                        <label for="projectDescription">Project Description</label>
-                        <textarea class="form-control" id="projectDescription" rows="3" placeholder="Enter project description" required></textarea>
+                        <label for="project_details">Project Description</label>
+                        <textarea class="form-control" name="project_details" id="project_details" rows="3" placeholder="Enter project description" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="assignees">Assignees</label>
-                        <select class="form-control" id="assignees" multiple onchange="handleAssigneeSelection(this)">
+                        <select class="form-control" name="assigned_to" id="assignees" multiple onchange="handleAssigneeSelection(this)">
                             <?php foreach ($assignees as $assignee) : ?>
                                 <option value="<?php echo esc_attr($assignee->ID); ?>"><?php echo esc_html($assignee->display_name); ?></option>
                             <?php endforeach; ?>
@@ -36,10 +110,10 @@ $assignees = $assignees_query->get_results();
                     <div id="selectedAssignees"></div>
                     <div class="form-group">
                         <label for="dueDate">Due Date</label>
-                        <input type="date" class="form-control" id="dueDate" min="<?php echo esc_attr(date('Y-m-d')); ?>" required>
+                        <input type="date" class="form-control" id="dueDate" name="due_date" min="<?php echo esc_attr(date('Y-m-d')); ?>" required>
                     </div>
                     <div class="button">
-                        <button type="submit" class="btn" style="background-color: #5277D6;color: #ffffff;width: 50%;border-radius:10px ;">Create Ticket</button>
+                        <button type="submit" class="btn" name="submit" style="background-color: #5277D6;color: #ffffff;width: 50%;border-radius:10px ;">Create Project</button>
                     </div>
                 </form>
             </div>

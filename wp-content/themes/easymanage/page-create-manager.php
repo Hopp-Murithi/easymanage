@@ -36,13 +36,11 @@
         $args = array(
             'body'        => $body,
             'method'=> 'POST',
-            'headers'     => array(
-                'Content-Type: application/json',
-                'Authorization: Bearer '.$token
-            ),
-            // 'timeout'     => '5',
-            // 'redirection' => '5',
-            // 'cookies'     => array(),
+            // 'headers'     => array(
+            //     'Content-Type: application/json',
+            //     'Authorization: Bearer '.$token
+            // ),
+           
         );
 
         $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/manager', $args );
@@ -170,6 +168,7 @@
     #message {
         background-color: #7AFF85;
         color: #ffffff;
+        width:50%;
         border-radius: 5px;
         padding: 4px;
         font-size: 20px;

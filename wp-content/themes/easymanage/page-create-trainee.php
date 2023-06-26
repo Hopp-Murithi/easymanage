@@ -18,13 +18,14 @@
         $traineename = $_POST['traineename'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
+        $stack = $_POST['stack'];
 
-      
-  // Create the trainer using the API endpoint
+        // Create the trainer using the API endpoint
         $body = [
             'traineename' => $traineename,
             'email' => $email,
-            'phone' => $phone
+            'phone' => $phone,
+            'stack' => $stack
         ];
 
         $args = [
@@ -32,8 +33,8 @@
             'method' => 'POST'
         ];
 
-        $response = $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/trainee',$args );
-       
+        $response = $response = wp_remote_post('http://localhost/easymanage/wp-json/easymanage/v2/trainee', $args);
+
         if (!is_wp_error($response)) {
             $response_data = json_decode(wp_remote_retrieve_body($response), true);
             // Display success message
@@ -73,7 +74,19 @@
                 <label for="phone">Phone Number</label>
                 <input type="number" name="phone" id='phone' />
             </div>
-         
+            <div>
+                <label for="stack">Stack</label>
+                <select name="stack" id="stack">
+                    <?php
+                    global $wpdb;
+                    $cohorts_table = $wpdb->prefix . 'cohorts';
+                    $programme_names = $wpdb->get_col("SELECT programme_name FROM $cohorts_table");
+                    foreach ($programme_names as $programme_name) {
+                        echo "<option value='$programme_name'>$programme_name</option>";
+                    }
+                    ?>
+                </select>
+            </div>
     
             <div class="submit"> <input type="submit" name='submit' value="Create"></div>
 

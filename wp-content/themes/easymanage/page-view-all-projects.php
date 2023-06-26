@@ -19,16 +19,17 @@ if (!is_wp_error($response)) {
         echo '<div class="container">';
         echo '<div class="row" id="card-container">';
 
-        foreach ($data as $project) {
+        foreach ($data as $index => $project) {
             $title = $project->project_name;
             $stack = $project->stack;
+            $pdetails = $project->project_details;
             $due_date = $project->due_date;
             $assignees = $project->assigned_to;
             $assignee_array = explode(',', $assignees);
             $assignee_count = count($assignee_array);
 
             echo '<div class="col-md-4">';
-            echo '<div class="card clickable-card" data-bs-toggle="modal" data-bs-target="#project-details-modal" data-title="' . $title . '" data-stack="' . $stack . '" data-due-date="' . $due_date . '" data-assignees="' . htmlentities(json_encode($assignee_array)) . '">';
+            echo '<div class="card clickable-card" data-bs-toggle="modal" data-bs-target="#project-details-modal-' . $index . '" data-title="' . $title . '" data-stack="' . $stack . '" data-due-date="' . $due_date . '" data-assignees="' . htmlentities(json_encode($assignee_array)) . '">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title">' . $title . '</h5>';
             echo '<div class="stack">';
@@ -58,47 +59,51 @@ if (!is_wp_error($response)) {
             echo '</div>';
             echo '</div>';
 
-
-              // Modal for displaying project details
-            echo '<div class="modal fade" id="project-details-modal" tabindex="-1" aria-labelledby="project-details-modal-label" aria-hidden="true">';
+            // Modal for displaying project details
+            echo '<div class="modal fade" id="project-details-modal-' . $index . '" tabindex="-1" aria-labelledby="project-details-modal-label-' . $index . '" aria-hidden="true">';
             echo '<div class="modal-dialog modal-dialog-centered">';
             echo '<div class="modal-content">';
             echo '<div class="modal-header">';
-            echo '<h5 class="modal-title" id="modal-project-title"></h5>';
+            echo '<h5 class="modal-title" id="modal-project-title-' . $index . '">Project details</h5>';
             echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
             echo '</div>';
             echo '<div class="modal-body">';
             echo '<div class="card">';
             echo '<div class="card-body">';
             echo "<h5 class='card-title'>$title</h5>"; // Remove the duplicate id="modal-project-title"
-            echo '<p id="modal-project-details">Additional project details...</p>';
+            echo '<p id="modal-project-details-' . $index . '"> ' . $pdetails . '</p>';
             echo '<div class="stack">';
-            echo '<p class="card-text" id="modal-project-stack"></p>';
+            echo '<p class="card-text" id="modal-project-stack-' . $index . '"> ' . $stack . ' </p>';
             echo '</div>';
             echo '<hr>';
             echo '<div class="row">';
             echo '<div class="col-6">';
-            echo '<p class="text-muted" id="modal-due-date">Due:</p>';
+            echo '<p class="text-muted" id="modal-due-date-' . $index . '">Due: ' . $due_date . ' </p>';
             echo '</div>';
             echo '<div class="col-6 text-end">';
             echo '<div class="assignee">';
-            echo '<p id="modal-assignee" style="display:flex;justify-content:center;align-items:center;padding:8px;"></p>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
+            echo '<p id="modal-assignee-' . $index . '" style="display:flex;justify-content:center;align-items:center;padding:8px;"> ' . $assignees. '</p>';
             echo '</div>';
             echo '</div>';
             echo '</div>';
 
+             // Display the "Mark Complete" button for logged-in trainees
+             if (is_user_logged_in() && in_array('trainee', $user_roles)) {
+                echo '<div class="modal-footer">';
+                echo '<button type="button" class="btn btn-success">Mark Complete</button>';
+                echo '</div>';
+            }
+
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
         }
 
         echo '</div>';
         echo '</div>';
-
-
         echo '</div>'; // Closing tag for <div class="main">
     } else {
         echo '<p>No projects found.</p>';
@@ -144,8 +149,7 @@ get_footer();
 
     .assignee {
         background-color: #FFB580;
-        margin-left: 40px;
-        width: 70%;
+        width: 100%;
         border-radius: 20px;
     }
 
@@ -155,14 +159,9 @@ get_footer();
 </style>
 
 <script>
-    // JavaScript code for handling modal and card click events
+    // JavaScript code for handling modal and card click eventsa
     document.addEventListener('DOMContentLoaded', function() {
         const cards = document.getElementsByClassName('clickable-card');
-        const modalTitle = document.getElementById('modal-project-title');
-        const modalDetails = document.getElementById('modal-project-details');
-        const modalStack = document.getElementById('modal-project-stack');
-        const modalDueDate = document.getElementById('modal-due-date');
-        const modalAssignee = document.getElementById('modal-assignee');
 
         // Handle card click event
         for (let i = 0; i < cards.length; i++) {
@@ -172,6 +171,12 @@ get_footer();
                 const stack = card.getAttribute('data-stack');
                 const dueDate = card.getAttribute('data-due-date');
                 const assignees = JSON.parse(html_entity_decode(card.getAttribute('data-assignees')));
+
+                const modalTitle = document.getElementById('modal-project-title-' + i);
+                const modalDetails = document.getElementById('modal-project-details-' + i);
+                const modalStack = document.getElementById('modal-project-stack-' + i);
+                const modalDueDate = document.getElementById('modal-due-date-' + i);
+                const modalAssignee = document.getElementById('modal-assignee-' + i);
 
                 modalTitle.innerText = title;
                 modalDetails.innerText = 'Additional project details...';

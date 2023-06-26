@@ -15,6 +15,75 @@ $assignees = $assignees_query->get_results();
 
 <div class="main">
     <h1>New program</h1>
+
+    <?php
+    global $success_msg;
+
+    if ($success_msg) {
+        echo "<p id='message'>Project manager has been added successfully</p>";
+        echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+        echo '<script> 
+                setTimeout(function(){
+                    document.getElementById("message").style.display ="none";
+                }, 3000);
+            </script>';
+    }
+
+    if ( isset($_POST['submit'])) {
+        $managername = $_POST['managername'];
+        $email = $_POST['email'];
+        $phone = $_POST['phone'];
+        $location = $_POST['location'];
+
+        // Create the program using the API endpoint
+        global $wpdb;
+        $wpdb->get_results("SELECT * FROM wp_users WHERE user_login = ''");
+
+
+
+        $body = [
+            'managername' => $managername,
+            'email' => $email,
+            'phone' => $phone
+        ];
+
+        $args = array(
+            'body'        => $body,
+            'method'=> 'POST',
+            // 'headers'     => array(
+            //     'Content-Type: application/json',
+            //     'Authorization: Bearer '.$token
+            // ),
+           
+        );
+
+        $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/manager', $args );
+    
+// var_dump($response);
+
+        if (!is_wp_error($response)) {
+            $response_data = json_decode(wp_remote_retrieve_body($response), true);
+            // Display success message
+            echo '<p id="message">Cohort has been added successfully</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000); 
+                </script>';
+        } else {
+            //Display error message
+            echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
+            echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+            echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000);
+                </script>';
+        }
+    }
+    ?>
+
     <div class="container">
         <form style="width:100%;" method="post">
             <?php
@@ -32,8 +101,8 @@ $assignees = $assignees_query->get_results();
             ?>
 
             <div>
-                <label for="name">Program name</label>
-                <input type="text" id="name" name="name" />
+                <label for="programename">Program name</label>
+                <input type="text" id="programename" name="programename" />
             </div>
 
             <div class="form-group">
