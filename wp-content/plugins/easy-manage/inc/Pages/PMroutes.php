@@ -60,16 +60,16 @@ class PMroutes
     {
         $user = wp_insert_user(
             array(
-                'user_login' => $request['managername'],
-                'user_email' => $request['email'],
+                'user_login' => sanitize_text_field($request['managername']),
+                'user_email' => sanitize_text_field($request['email']),
                 'user_pass'  => 'manager',
                 'role'       => 'program_manager',
                 'meta_input' => array(
-                    'phone_number'    => $request['phone'],
+                    'phone_number'    => sanitize_text_field($request['phone']),
                     'is_deactivated'  => 0,
                     'is_deleted'      => 0
                 )
-            )
+            ) 
         );
 
         if (is_wp_error($user)) {
