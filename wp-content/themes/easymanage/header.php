@@ -2,103 +2,107 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <title>EasyManage</title>
-    <?php wp_head() ?>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
+
+  <title>EasyManage</title>
+  <?php wp_head() ?>
 </head>
 
 <body>
-<style>
+  <style>
     .logo {
-        font-size: 34px;
-        font-weight: 600;
-        margin-left: 15px;
+      font-size: 34px;
+      font-weight: 600;
+      margin-left: 15px;
     }
 
     li {
-        margin-right: 12px;
+      margin-right: 12px;
     }
 
     .search {
-        margin-right: 15rem;
-        display: flex; 
-        align-items: center;
+      margin-right: 15rem;
+      display: flex;
+      align-items: center;
     }
 
     .username {
-        font-size: 24px;
-        color: black;
+      font-size: 24px;
+      color: black;
     }
 
     .search-form {
-        display: flex;color: #000;
-        width:100%;
-        align-items: center;
-        margin-top: -5px;
+      display: flex;
+      color: #000;
+      width: 100%;
+      align-items: center;
+      margin-top: -5px;
     }
 
     .search-input {
-        margin-right: 10px;
-       
-        height: 34px;
-        padding: 4px 8px;
-        font-size: 16px;
+      margin-right: 10px;
+
+      height: 34px;
+      padding: 4px 8px;
+      font-size: 16px;
     }
-nav{
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    .logout-text:hover{
+  color:red;
 }
-nav:hover{
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-}
+    nav {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    nav:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
     .search-button {
-        height: 32px;
-        padding: 4px 4px;
-        font-size: 16px;
+      height: 32px;
+      padding: 4px 4px;
+      font-size: 16px;
     }
-</style>
+  </style>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed;width:100%">
-  <a class="navbar-brand logo" href="#">
-    <span style="color:#5277D6;">Easy</span><span style="color:#EB7017;">Manage</span>
-  </a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed;width:100%">
+    <a class="navbar-brand logo" href="#">
+      <span style="color:#5277D6;">Easy</span><span style="color:#EB7017;">Manage</span>
+    </a>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-    <ul class="navbar-nav">
-      <?php if (is_user_logged_in()) : ?>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <?php if (is_user_logged_in()) : ?>
 
-        <!-- Searchbar -->
-        <li class="nav-item search">
-          <form class="form-inline my-2 my-lg-0 search-form">
-            <div class="input-group">
-              <input class="form-control search-input" type="search" placeholder="Search Members" aria-label="Search">
-              <div class="input-group-append">
-                <button class="btn btn-outline-success search-button" type="submit">
-                  <i class="bi bi-search" style="color:#000000"></i>
-                </button>
+          <!-- Searchbar -->
+          <li class="nav-item search">
+            <form class="form-inline my-2 my-lg-0 search-form">
+              <div class="input-group">
+                <input class="form-control search-input" type="search" placeholder="Search Members" aria-label="Search">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-success search-button" type="submit">
+                    <i class="bi bi-search" style="color:#000000"></i>
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
-        </li>
+            </form>
+          </li>
 
-        <!-- Username and icon -->
-        <li class="nav-item">
-          <a class="nav-link username" href="#">
-          <i class="bi bi-person"style="color:#000000"></i> <?php echo wp_get_current_user()->display_name; ?> 
-          </a>
-        </li>
+          <!-- Username and icon -->
+          <li class="nav-item">
+           
+            <a style="color:#000000;" class="nav-link logout-text" href="<?php echo wp_logout_url(home_url()); ?>">
+              <i class="bi bi-box-arrow-right logout-text" style="color:#000000;font-size:24px;"></i> Logout
+            </a>
+          </li>
 
-      <?php endif; ?>
-    </ul>
-  </div>
-</nav>
-
-
+        <?php endif; ?>
+      </ul>
+    </div>
+  </nav>
