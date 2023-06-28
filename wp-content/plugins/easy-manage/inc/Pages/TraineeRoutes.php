@@ -54,6 +54,7 @@ class TraineeRoutes
             'role' => 'trainee',
             'meta_input' => [
                 'phone_number' => $request['phone'],
+                'stack' => $request['stack'],
                 'is_deactivated' => 0,
                 'is_deleted' => 0
             ]
@@ -78,6 +79,7 @@ class TraineeRoutes
         }
 
         $phone = get_user_meta($trainee_id, 'phone_number', true);
+        $stack = get_user_meta($trainee_id, 'stack', true);
 
         $response = [
             'status' => 'success',
@@ -86,6 +88,7 @@ class TraineeRoutes
                 'name' => $trainee->user_login,
                 'email' => $trainee->user_email,
                 'phone' => $phone,
+                'stack' => $stack,
                 'password' => $trainee->user_pass
             ]
         ];
@@ -109,6 +112,7 @@ class TraineeRoutes
                     'id' => $trainee_id,
                     'name' => $trainee->user_login,
                     'email' => $trainee->user_email,
+                    'stack'=> $trainee->stack,
                     'phone' => $phone
                 );
             }

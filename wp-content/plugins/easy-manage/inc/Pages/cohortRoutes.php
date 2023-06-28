@@ -20,7 +20,7 @@ class cohortRoutes{
         //     return current_user_can('manage_options');
         // }
     ));
-
+    
     register_rest_route('easymanage/v2', '/cohort/(?P<id>\d+)', array(
         'methods'             => 'GET',
         'callback'            => array($this, 'get_cohort'),

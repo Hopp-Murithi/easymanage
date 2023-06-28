@@ -21,9 +21,9 @@ class PMroutes
         register_rest_route('easymanage/v2', '/manager', array(
             'methods'  => 'POST',
             'callback'  => array($this, 'create_manager'),
-            'permission_callback' => function () {
-                return current_user_can('manage_options');
-            }
+            // 'permission_callback' => function () {
+            //     return current_user_can('manage_options');
+            // }
         ));
 
         register_rest_route('easymanage/v2', '/manager/(?P<id>\d+)', array(
@@ -60,16 +60,16 @@ class PMroutes
     {
         $user = wp_insert_user(
             array(
-                'user_login' => sanitize_text_field($request['managername']),
-                'user_email' => sanitize_text_field($request['email']),
+                'user_login' => $request['managername'],
+                'user_email' => $request['email'],
                 'user_pass'  => 'manager',
                 'role'       => 'program_manager',
                 'meta_input' => array(
-                    'phone_number'    => sanitize_text_field($request['phone']),
+                    'phone_number'    => $request['phone'],
                     'is_deactivated'  => 0,
                     'is_deleted'      => 0
                 )
-            ) 
+            )
         );
 
         if (is_wp_error($user)) {
@@ -140,13 +140,13 @@ class PMroutes
     {
         $manager_id = $request->get_param('id');
         $manager = get_user_by('ID', $manager_id);
-    
+
         if (!$manager || !in_array('manager', $manager->roles)) {
             return new WP_Error('404', 'manager not found');
         }
-    
+
         $data = $request->get_json_params();
-    
+
         // Update manager data
         $updated = wp_update_user(array(
             'ID' => $manager_id,
@@ -156,12 +156,12 @@ class PMroutes
                 'phone_number' => isset($data['phone']) ? $data['phone'] : get_user_meta($manager_id, 'phone_number', true),
             ),
         ));
-    
+
         if (is_wp_error($updated)) {
             $error_message = $updated->get_error_message();
             return new WP_Error('400', $error_message);
         } else {
-            return rest_ensure_response($updated,'manager updated successfully');
+            return rest_ensure_response($updated, 'manager updated successfully');
         }
     }
 
