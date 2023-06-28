@@ -9,6 +9,7 @@ $admin_menu = array(
   array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/dashboard/'),
   array('icon' => 'bi bi-person-plus', 'text' => 'Add Program Manager', 'link' => 'http://localhost/easymanage/create-manager/'),
   array('icon' => 'bi bi-people', 'text' => 'View All Members', 'link' => 'http://localhost/easymanage/view-members/'),
+  array('icon' => 'bi bi-journal-bookmark-fill', 'text' => 'All cohorts', 'link' => 'http://localhost/easymanage/view-all-cohorts/'),
   array('icon' => 'bi bi-file-earmark-text', 'text' => 'View All Projects', 'link' => 'http://localhost/easymanage/view-all-projects/'),
   array('icon' => 'bi bi-gear', 'text' => 'Admin Panel', 'link' => 'http://localhost/easymanage/wp-admin/')
 );
@@ -16,6 +17,7 @@ $admin_menu = array(
 $program_manager_menu = array(
   array('icon' => 'bi bi-house', 'text' => 'Home', 'link' => 'http://localhost/easymanage/dashboard/'),
   array('icon' => 'bi bi-person-plus', 'text' => 'Add Trainer', 'link' => 'http://localhost/easymanage/create-trainer/'),
+  array('icon' => 'bi bi-journal-bookmark-fill', 'text' => 'All cohorts', 'link' => 'http://localhost/easymanage/view-all-cohorts/'),
   array('icon' => 'bi bi-bag-plus-fill', 'text' => 'Create Program', 'link' => 'http://localhost/easymanage/create-program/'),
   array('icon' => 'bi bi-people', 'text' => 'View All Members', 'link' => 'http://localhost/easymanage/view-members/'),
   array('icon' => 'bi bi-file-earmark-text', 'text' => 'View All Projects', 'link' => 'http://localhost/easymanage/view-all-projects/')
@@ -67,7 +69,7 @@ if (in_array('administrator', $user_roles)) {
           <div class="logout-body">
             <ul style="list-style-type: none;">
               <li class="nav-item logout-icon">
-                <a class="nav-link username" style="color:#ffffff;font-size:18px;" href="#">
+                <a class="nav-link username" style="color:#ffffff;font-size:18px;" href="http://localhost/easymanage/single-user/">
                   <i class="bi bi-person-circle" style="color:#ffffff;font-size:25px;"></i> <?php echo wp_get_current_user()->display_name; ?>
                 </a>
               </li>
