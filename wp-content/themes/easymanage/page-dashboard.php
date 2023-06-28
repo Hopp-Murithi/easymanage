@@ -13,7 +13,7 @@ wp_head();
           <div class="card-body">
             <i class="bi bi-people icon"></i>
             <h5 class="card-title">Total Members</h5>
-            <p class="card-text"><?php echo get_user_count_by_role('program_manager') + get_user_count_by_role('trainer') + get_user_count_by_role('trainee') ; ?></p>
+            <p class="card-text"><?php echo get_user_count_by_role('program_manager') + get_user_count_by_role('trainer') + get_user_count_by_role('trainee'); ?></p>
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@ wp_head();
     ]);
     if (!empty($latest_member)) {
       $latest_member = $latest_member[0];
-      ?>
+    ?>
       <table class="table">
         <thead>
           <tr>
@@ -103,12 +103,18 @@ wp_head();
             <td><?php echo esc_html($latest_member->display_name); ?></td>
             <td><?php echo esc_html($latest_member->user_email); ?></td>
             <td>
-              <span class="badge bg-success text-white">Active</span>
+              <?php
+              $is_deactivated = get_user_meta($latest_member->ID, 'is_deactivated', true);
+              $status = ($is_deactivated == 1) ? 'Inactive' : 'Active';
+              $status_class = ($is_deactivated == 1) ? 'bg-danger text-white' : 'bg-success text-white';
+              ?>
+              <span class="badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status); ?></span>
             </td>
             <td><?php echo esc_html(implode(', ', $latest_member->roles)); ?></td>
           </tr>
         </tbody>
       </table>
+
     <?php } else { ?>
       <p>No members found.</p>
     <?php } ?>
@@ -172,7 +178,7 @@ function get_user_count_by_role($role)
     WHERE $wpdb->usermeta.meta_key = %s 
     AND $wpdb->usermeta.meta_value LIKE %s",
     $wpdb->prefix . 'capabilities',
-    '%"'.$role.'"%'
+    '%"' . $role . '"%'
   ));
   return $count;
 }

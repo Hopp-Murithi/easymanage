@@ -56,6 +56,8 @@ if (is_user_logged_in()) {
 
 $login_name = '';
 
+// ...
+
 if (isset($_POST['login'])) {
     $employee_email = $_POST['email'];
     $user_password = $_POST['password'];
@@ -67,55 +69,46 @@ if (isset($_POST['login'])) {
         // Call the track_login_attempts function passing the username and password
         track_login_attempts($employee_email, $user_password);
 
-        //get token and set token in cookie
+        // Get the user by email
         $user = get_user_by('email', $employee_email);
-
-        $login_name = $user->user_login;
-
-        $args = [
-            'method' => 'POST',
-            'body' => [
-                'username' => $login_name,
-                'password' => $user_password
-            ]
-        ];
-        $result = wp_remote_post('http://localhost/easymanage/wp-json/jwt-auth/v1/token', $args);
-
-
-        $token = (json_decode(wp_remote_retrieve_body($result)));
-        setcookie('token', $token->token, time() + (86400 * 30), '/', 'localhost');
-
-
 
         if (!$user) {
             $error_message = "Invalid user email.";
         } elseif (!wp_check_password($user_password, $user->user_pass, $user->ID)) {
             $error_message = "Invalid password.";
         } else {
-            wp_set_current_user($user->ID);
-            wp_set_auth_cookie($user->ID);
-            do_action('wp_login', $user->user_login, $user);
+            $is_deactivated = get_user_meta($user->ID, 'is_deactivated', true);
 
-            $user_roles = $user->roles;
-            $redirect_url = '';
+            if ($is_deactivated == 1) {
+                $error_message = "Account deactivated. Please contact support.";
+            } else {
+                wp_set_current_user($user->ID);
+                wp_set_auth_cookie($user->ID);
+                do_action('wp_login', $user->user_login, $user);
 
-            if (in_array('administrator', $user_roles)) {
-                $redirect_url = 'http://localhost/easymanage/dashboard/';
-            } elseif (in_array('program_manager', $user_roles)) {
-                $redirect_url = 'http://localhost/easymanage/dashboard/';
-            } elseif (in_array('trainer', $user_roles)) {
-                $redirect_url = 'http://localhost/easymanage/dashboard/';
-            } elseif (in_array('trainee', $user_roles)) {
-                $redirect_url = 'http://localhost/easymanage/view-all-projects/';
+                $user_roles = $user->roles;
+                $redirect_url = '';
+
+                if (in_array('administrator', $user_roles)) {
+                    $redirect_url = 'http://localhost/easymanage/dashboard/';
+                } elseif (in_array('program_manager', $user_roles)) {
+                    $redirect_url = 'http://localhost/easymanage/dashboard/';
+                } elseif (in_array('trainer', $user_roles)) {
+                    $redirect_url = 'http://localhost/easymanage/dashboard/';
+                } elseif (in_array('trainee', $user_roles)) {
+                    $redirect_url = 'http://localhost/easymanage/view-all-projects/';
+                }
+
+                $redirect_url .= '?user_id=' . $user->ID;
+
+                wp_redirect($redirect_url);
+                exit;
             }
-
-            $redirect_url .= '?user_id=' . $user->ID;
-
-            wp_redirect($redirect_url);
-            exit;
         }
     }
 }
+
+
 
 ?>
 
@@ -128,6 +121,9 @@ if (isset($_POST['login'])) {
 <div class="form-container">
     <form class="form-inside" action="" method="POST">
         <div class="form">
+            <?php if (!empty($error_message)) : ?>
+                <div style="color: red;font-size:20px;margin-top:10px;"><?php echo $error_message; ?></div>
+            <?php endif; ?>
             <div style="display:flex;justify-content:center;font-size:40px;color:#EB7017;font-weight:500;margin-top:-90px;">
                 <?php
                 $timezone = new DateTimeZone('Africa/Nairobi');
@@ -147,9 +143,7 @@ if (isset($_POST['login'])) {
                 echo 'Good ' . $period . '!';
                 ?>
             </div>
-            <?php if (!empty($error_message)) : ?>
-                <div style="color: red;font-size:20px;margin-top:10px;"><?php echo $error_message; ?></div>
-            <?php endif; ?>
+
             <div class="input1">
                 <label for="employee-number">Email:</label>
                 <input type="email" placeholder="Enter email" name="email">

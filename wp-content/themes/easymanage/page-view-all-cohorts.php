@@ -4,43 +4,42 @@ get_sidebar();
 ?>
 
 <?php
-$user = wp_get_current_user();
-$user_roles = $user->roles;
+
 
 // Fetch data from the API
-$response = wp_remote_get('http://localhost/easymanage/wp-json/easymanage/v2/projects');
+$response = wp_remote_get('http://localhost/easymanage/wp-json/easymanage/v2/cohorts');
 
 if (!is_wp_error($response)) {
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body);
-    
-   
 
     if (!empty($data)) {
         echo '<div class="main">';
         echo '<div class="container">';
         echo '<div class="row" id="card-container">';
 
-        foreach ($data as $index => $project) {
-            $title = $project->project_name;
-            $stack = $project->stack;
-            $pdetails = $project->project_details;
-            $due_date = $project->due_date;
-            $assignees = $project->assigned_to;
+        foreach ($data as $index => $cohort) {
+            $title = $cohort->programme_name;
+            $place = $cohort->place;
+            $starts_date = $cohort->starts_date;
+            $end_date = $cohort->end_date;
+            $assignees = $cohort->assigned_to;
             $assignee_array = explode(',', $assignees);
             $assignee_count = count($assignee_array);
 
+
             echo '<div class="col-md-4">';
-            echo '<div class="card clickable-card" data-bs-toggle="modal" data-bs-target="#project-details-modal-' . $index . '" data-title="' . $title . '" data-stack="' . $stack . '" data-due-date="' . $due_date . '" data-assignees="' . htmlentities(json_encode($assignee_array)) . '">';
+            echo '<div class="card clickable-card" data-bs-toggle="modal" data-bs-target="#project-details-modal-' . $index . '" data-title="' . $title . '" data-stack="' . $place . '" data-due-date="' . $starts_date . '" data-assignees="' . htmlentities(json_encode($assignees)) . '">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title">' . $title . '</h5>';
             echo '<div class="stack">';
-            echo '<p class="card-text">' . $stack . '</p>';
+            echo '<p class="card-text"><i class="bi bi-geo-alt-fill" style="color:black;margin-right:1rem;float:left;"></i></p>';
+            echo '<p class="card-text">' . $place . '</p>';
             echo '</div>';
             echo '<hr>';
             echo '<div class="row">';
             echo '<div class="col-6">';
-            echo '<p class="text-muted">Due: ' . $due_date . '</p>';
+            echo '<p class="text-muted">Starts: ' . $starts_date . '</p>';
             echo '</div>';
             echo '<div class="col-6 text-end">';
             echo '<div class="assignee">';
@@ -48,7 +47,7 @@ if (!is_wp_error($response)) {
                 $display_assignee = substr($assignee_array[0], 0, 4);
                 echo '<p class="" style="display:flex;justify-content:center;align-items:center;padding:8px;">' . $display_assignee;
 
-                if ($assignee_count > 1) {
+                if ($assignee_count > 0) {
                     echo '...';
                 }
 
@@ -66,35 +65,33 @@ if (!is_wp_error($response)) {
             echo '<div class="modal-dialog modal-dialog-centered">';
             echo '<div class="modal-content">';
             echo '<div class="modal-header">';
-            echo '<h5 class="modal-title" id="modal-project-title-' . $index . '">Project details</h5>';
+            echo '<h5 class="modal-title" id="modal-project-title-' . $index . '">Cohort details</h5>';
             echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
             echo '</div>';
             echo '<div class="modal-body">';
             echo '<div class="card">';
             echo '<div class="card-body">';
             echo "<h5 class='card-title'>$title</h5>"; // Remove the duplicate id="modal-project-title"
-            echo '<p id="modal-project-details-' . $index . '"> ' . $pdetails . '</p>';
+            echo '<p id="modal-project-details-' . $index . '">  </p>';
             echo '<div class="stack">';
-            echo '<p class="card-text" id="modal-project-stack-' . $index . '"> ' . $stack . ' </p>';
+            echo '<p class="card-text"><i class="bi bi-geo-alt-fill" style="color:black;margin-right:1rem;float:left;"></i></p>';
+            echo '<p class="card-text" id="modal-project-stack-' . $index . '"> ' . $place . ' </p>';
             echo '</div>';
             echo '<hr>';
             echo '<div class="row">';
             echo '<div class="col-6">';
-            echo '<p class="text-muted" id="modal-due-date-' . $index . '">Due: ' . $due_date . ' </p>';
+            echo '<p class="text-muted" id="modal-due-date-' . $index . '">Starts on: ' . $starts_date . ' </p>';
+            echo '<p class="text-muted" id="modal-due-date-' . $index . '">Ends on: ' . $end_date . ' </p>';
             echo '</div>';
             echo '<div class="col-6 text-end">';
             echo '<div class="assignee">';
-            echo '<p id="modal-assignee-' . $index . '" style="display:flex;justify-content:center;align-items:center;padding:8px;"> ' . $assignees. '</p>';
+            echo '<p id="modal-assignee-' . $index . '" style="display:flex;justify-content:center;align-items:center;padding:8px;"> ' . $assignees . '</p>';
             echo '</div>';
             echo '</div>';
             echo '</div>';
 
-             // Display the "Mark Complete" button for logged-in trainees
-             if (is_user_logged_in() && in_array('trainee', $user_roles)) {
-                echo '<div class="modal-footer">';
-                echo '<button type="button" class="btn btn-success">Mark Complete</button>';
-                echo '</div>';
-            }
+            // Display the "Mark Complete" button for logged-in trainees
+
 
             echo '</div>';
             echo '</div>';
@@ -108,7 +105,7 @@ if (!is_wp_error($response)) {
         echo '</div>';
         echo '</div>'; // Closing tag for <div class="main">
     } else {
-        echo '<p class="no-projects">No projects found.</p>';
+        echo '<p class="no-cohorts">No Cohorts found.</p>';
     }
 } else {
     echo '<p>Error occurred while fetching data from the API.</p>';
@@ -145,7 +142,7 @@ get_footer();
         justify-content: center;
         background-color: #ffffff;
         padding: 5px;
-        width: 100%;
+        width: 70%;
         border-radius: 20px;
     }
 
@@ -158,13 +155,15 @@ get_footer();
     p {
         font-size: 20px;
     }
-    .no-projects {
+
+    .no-cohorts {
         display: flex;
         color: red;
         justify-content: center;
         align-items: center;
         width: 100vw;
         height: 90vh;
+        font-size: 40px;
     }
 </style>
 

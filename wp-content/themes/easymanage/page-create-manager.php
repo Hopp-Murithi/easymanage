@@ -22,11 +22,6 @@
         $phone = $_POST['phone'];
 
         // Create the program manager using the API endpoint
-        global $wpdb;
-        $wpdb->get_results("SELECT * FROM wp_users WHERE user_login = ''");
-
-
-
         $body = [
             'managername' => $managername,
             'email' => $email,
@@ -35,17 +30,10 @@
 
         $args = array(
             'body'        => $body,
-            'method'=> 'POST',
-            // 'headers'     => array(
-            //     'Content-Type: application/json',
-            //     'Authorization: Bearer '.$token
-            // ),
-           
+            'method'      => 'POST',
         );
 
-        $response = wp_remote_post( 'http://localhost/easymanage/wp-json/easymanage/v2/manager', $args );
-    
-// var_dump($response);
+        $response = wp_remote_post('http://localhost/easymanage/wp-json/easymanage/v2/manager', $args);
 
         if (!is_wp_error($response)) {
             $response_data = json_decode(wp_remote_retrieve_body($response), true);
@@ -58,8 +46,8 @@
                     }, 3000); 
                 </script>';
         } else {
-            //Display error message
-            echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
+            // Display error message
+            echo '<p id="message">Error: ' . $response['response']['message'] . '</p>';
             echo '<script> document.getElementById("message").style.display = "flex"; </script>';
             echo '<script> 
                     setTimeout(function(){
@@ -70,8 +58,6 @@
     }
     ?>
     <div class="container">
-
-
         <form style="width:100%;" method="post">
             <div>
                 <label for="name">Name</label>
@@ -100,7 +86,6 @@
         height: 90.5vh;
         background-color: #ffffff;
     }
-
 
     .container {
         display: flex;
@@ -144,7 +129,6 @@
     }
 
     input[type="submit"] {
-
         background-color: #5277D6;
         color: white;
         width: 50%;
@@ -166,9 +150,12 @@
     }
 
     #message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: #7AFF85;
         color: #ffffff;
-        width:50%;
+        width: 100%;
         border-radius: 5px;
         padding: 4px;
         font-size: 20px;

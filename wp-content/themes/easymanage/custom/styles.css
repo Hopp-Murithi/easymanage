@@ -69,6 +69,7 @@ input{
 	color: #737476;
 }
 .error-message {
+	padding: 12px;
     color: red;
 	font-weight:500;
    font-size: 18px;
