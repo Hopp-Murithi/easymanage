@@ -1,6 +1,4 @@
 <?php
-
-
 get_header();
 get_sidebar();
 
@@ -9,6 +7,11 @@ $assignees_query = new WP_User_Query(array(
 ));
 
 $assignees = $assignees_query->get_results();
+
+// Get the names already assigned to cohorts
+global $wpdb;
+$assigned_names = $wpdb->get_col("SELECT DISTINCT assigned_to FROM wp_cohort");
+
 ?>
 
 <div class="main">
@@ -96,9 +99,22 @@ $assignees = $assignees_query->get_results();
             <input type="text" id="programme_name" name="programme_name" />
 
             <label for="assigned_to">Assign to:</label>
+
+
             <select class="form-control" name="assigned_to" id="assigned_to">
                 <?php foreach ($assignees as $assignee) : ?>
-                    <option value="<?php echo esc_attr($assignee->display_name); ?>"><?php echo esc_html($assignee->display_name); ?></option>
+                    <?php
+                    $display_name = esc_html($assignee->display_name);
+                    $already_assigned = $wpdb->get_var($wpdb->prepare("SELECT assigned_to FROM wp_cohorts WHERE assigned_to = %s", $display_name));
+
+                    if (!$already_assigned) {
+                        if ($_POST['assigned_to'] === $display_name) {
+                            echo '<option value="' . esc_attr($display_name) . '" selected>' . $display_name . '</option>';
+                        } else {
+                            echo '<option value="' . esc_attr($display_name) . '">' . $display_name . '</option>';
+                        }
+                    }
+                    ?>
                 <?php endforeach; ?>
             </select>
 
@@ -151,8 +167,6 @@ $assignees = $assignees_query->get_results();
         justify-content: center;
         margin: 15px;
     }
-
-
 
     label {
         display: block;

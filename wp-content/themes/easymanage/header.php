@@ -67,7 +67,7 @@
     }
   </style>
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed;width:100%">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed;width:100%;z-index:999;">
     <a class="navbar-brand logo" href="#">
       <span style="color:#5277D6;">Easy</span><span style="color:#EB7017;">Manage</span>
     </a>

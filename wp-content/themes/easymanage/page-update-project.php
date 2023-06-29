@@ -10,10 +10,11 @@ $assignees_query = new WP_User_Query(array(
 $assignees = $assignees_query->get_results();
 
 // Variable to store validation errors
-$errors = []; ?>
+$errors = [];
+?>
 
 <div class="main">
-    <h1>New Project</h1>
+    <h1>Update Project</h1>
     <?php
     if (isset($_POST['submit'])) {
         // Validate project name
@@ -40,29 +41,15 @@ $errors = []; ?>
             $errors[] = 'Due date is required.';
         }
 
-        // Get the trainer's assigned cohort and retrieve the stack
-        // Get the trainer's ID and user_login
-        $trainer_id = get_current_user_id();
-
-        global $wpdb;
-        $users_table = $wpdb->prefix . 'users';
-        $user_login = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM $users_table WHERE ID = %d", $trainer_id));
-
-        // Get the trainer's assigned cohort and retrieve the stack
-        $cohorts_table = $wpdb->prefix . 'cohorts';
-        $cohort = $wpdb->get_row($wpdb->prepare("SELECT * FROM $cohorts_table WHERE assigned_to = %s", $user_login));
-        $stack = $cohort->programme_name;
-
         if (empty($errors)) {
-            // Create the program manager using the API endpoint
-            // $wpdb->get_results("SELECT * FROM wp_users WHERE user_login = ''");
-
+            // Update the project using the API endpoint
+            $project_id = $_GET['project_id'];
+            
             $body = array(
                 'project_name' => $project_name,
                 'project_details' => $project_details,
                 'due_date' => $due_date,
                 'assigned_to' => $assigned_to,
-                'stack' => $stack,
             );
 
             $args = array(
@@ -73,30 +60,27 @@ $errors = []; ?>
                 ]
             );
 
-            $response = wp_remote_post('http://localhost/easymanage/wp-json/easymanage/v2/project', $args);
+            $response = wp_remote_post("http://localhost/easymanage/wp-json/easymanage/v2/project/$project_id", $args);
 
-            var_dump(wp_remote_retrieve_body($response));
-
-            // if (!is_wp_error($response)) {
-            //     $response_data = json_decode(wp_remote_retrieve_body($response), true);
-            //     // Display success message
-            //     echo '<p id="message">Project has been added successfully</p>';
-            //     echo '<script> document.getElementById("message").style.display = "flex"; </script>';
-            //     echo '<script> 
-            //         setTimeout(function(){
-            //             document.getElementById("message").style.display = "none";
-            //         }, 3000); 
-            //     </script>';
-            // } else {
-            //     // Display error message
-            //     echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
-            //     echo '<script> document.getElementById("message").style.display = "flex"; </script>';
-            //     echo '<script> 
-            //         setTimeout(function(){
-            //             document.getElementById("message").style.display = "none";
-            //         }, 3000);
-            //     </script>';
-            // }
+            if (!is_wp_error($response)) {
+                // Display success message
+                echo '<p id="message">Project has been updated successfully</p>';
+                echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+                echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000); 
+                </script>';
+            } else {
+                // Display error message
+                echo '<p id="message">Error: ' . $response->get_error_message() . '</p>';
+                echo '<script> document.getElementById("message").style.display = "flex"; </script>';
+                echo '<script> 
+                    setTimeout(function(){
+                        document.getElementById("message").style.display = "none";
+                    }, 3000);
+                </script>';
+            }
         }
     }
     ?>
@@ -115,7 +99,7 @@ $errors = []; ?>
     global $success_msg;
 
     if ($success_msg) {
-        echo "<p id='message'>Project manager has been added successfully</p>";
+        echo "<p id='message'>Project has been added successfully</p>";
         echo '<script> document.getElementById("message").style.display = "flex"; </script>';
         echo '<script> 
                 setTimeout(function(){
@@ -152,7 +136,7 @@ $errors = []; ?>
                     </div>
                     <!-- Remove the stack input field -->
                     <div class="button">
-                        <button type="submit" class="btn" name="submit" style="background-color: #5277D6;color: #ffffff;width: 50%;border-radius:10px ;">Create Project</button>
+                        <button type="submit" class="btn" name="submit" style="background-color: #5277D6;color: #ffffff;width: 50%;border-radius:10px ;">Update Project</button>
                     </div>
                 </form>
             </div>

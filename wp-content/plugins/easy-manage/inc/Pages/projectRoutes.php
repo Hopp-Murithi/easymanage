@@ -57,12 +57,24 @@ class ProjectRoutes {
             'stack' => $trainer_stack,
         );
 
-        $wpdb->insert($table_name, $data);
+        // return $data;
+
+        $result = $wpdb->insert($table_name, $data);
+
 
         $response = new WP_REST_Response($data);
-        $response->set_status(201);
-        $response->set_data(array('message' => 'Project created successfully.'));
-        return $response;
+
+
+        if($result)
+        {
+            $response->set_status(201);
+            $response->set_data(array('message' => 'Project created successfully.'));
+            return $response;
+        }else{
+            return [
+                'message'=>'not created'
+            ];
+        }
     }
 
     public function get_all_projects() {
@@ -76,7 +88,7 @@ class ProjectRoutes {
         return $response;
     }
 
-    public function update_project(WP_REST_Request $request) {
+    public function update_project( $request) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'projects';
 
@@ -85,12 +97,14 @@ class ProjectRoutes {
         $project_details = $request->get_param('project_details');
         $due_date = $request->get_param('due_date');
         $assigned_to = $request->get_param('assigned_to');
+        $is_complete = $request->get_param('is_complete');
 
         $data = array(
             'project_name' => $project_name,
             'project_details' => $project_details,
             'due_date' => $due_date,
             'assigned_to' => $assigned_to,
+            'is_complete' => $is_complete
         );
 
         $wpdb->update($table_name, $data, array('id' => $id));

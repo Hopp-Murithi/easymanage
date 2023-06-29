@@ -13,8 +13,6 @@ $response = wp_remote_get('http://localhost/easymanage/wp-json/easymanage/v2/pro
 if (!is_wp_error($response)) {
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body);
-    
-   
 
     if (!empty($data)) {
         echo '<div class="main">';
@@ -30,78 +28,107 @@ if (!is_wp_error($response)) {
             $assignee_array = explode(',', $assignees);
             $assignee_count = count($assignee_array);
 
-            echo '<div class="col-md-4">';
-            echo '<div class="card clickable-card" data-bs-toggle="modal" data-bs-target="#project-details-modal-' . $index . '" data-title="' . $title . '" data-stack="' . $stack . '" data-due-date="' . $due_date . '" data-assignees="' . htmlentities(json_encode($assignee_array)) . '">';
-            echo '<div class="card-body">';
-            echo '<h5 class="card-title">' . $title . '</h5>';
-            echo '<div class="stack">';
-            echo '<p class="card-text">' . $stack . '</p>';
-            echo '</div>';
-            echo '<hr>';
-            echo '<div class="row">';
-            echo '<div class="col-6">';
-            echo '<p class="text-muted">Due: ' . $due_date . '</p>';
-            echo '</div>';
-            echo '<div class="col-6 text-end">';
-            echo '<div class="assignee">';
-            if ($assignee_count > 0) {
-                $display_assignee = substr($assignee_array[0], 0, 4);
-                echo '<p class="" style="display:flex;justify-content:center;align-items:center;padding:8px;">' . $display_assignee;
+            // Check user roles to determine access to projects
+            $canViewProject = false;
 
-                if ($assignee_count > 1) {
-                    echo '...';
+            if (in_array('administrator', $user_roles) || in_array('program_manager', $user_roles)) {
+                // Administrator or program_manager can view all projects
+                $canViewProject = true;
+            } elseif (in_array('trainer', $user_roles)) {
+                // Trainer can view projects with the same stack as the trainer
+                global $wpdb;
+                $users_table = $wpdb->prefix . 'users';
+                $trainer_id = get_current_user_id();
+                $user_login = $wpdb->get_var($wpdb->prepare("SELECT user_login FROM $users_table WHERE ID = %d", $trainer_id));
+
+                $cohorts_table = $wpdb->prefix . 'cohorts';
+                $cohort = $wpdb->get_row($wpdb->prepare("SELECT * FROM $cohorts_table WHERE assigned_to = %s", $user_login));
+                $trainer_stack = $cohort->programme_name;
+
+                if ($stack === $trainer_stack) {
+                    $canViewProject = true;
+                }
+            } elseif (in_array('trainee', $user_roles)) {
+                // Trainee can view projects assigned to them
+                if (in_array($user->display_name, $assignee_array)) {
+                    $canViewProject = true;
+                }
+            }
+
+            if ($canViewProject) {
+                echo '<div class="col-md-4">';
+                echo '<div class="card clickable-card" data-bs-toggle="modal" data-bs-target="#project-details-modal-' . $index . '" data-title="' . $title . '" data-stack="' . $stack . '" data-due-date="' . $due_date . '" data-assignees="' . htmlentities(json_encode($assignee_array)) . '">';
+                echo '<div class="card-body">';
+                echo '<h5 class="card-title">' . $title . '</h5>';
+                echo '<div class="stack">';
+                echo '<p class="card-text">' . $stack . '</p>';
+                echo '</div>';
+                echo '<hr>';
+                echo '<div class="row">';
+                echo '<div class="col-6">';
+                echo '<p class="text-muted">Due: ' . $due_date . '</p>';
+                echo '</div>';
+                echo '<div class="col-6 text-end">';
+                echo '<div class="assignee">';
+                if ($assignee_count > 0) {
+                    $display_assignee = substr($assignee_array[0], 0, 4);
+                    echo '<p class="" style="display:flex;justify-content:center;align-items:center;padding:8px;">' . $display_assignee;
+
+                    if ($assignee_count > 1) {
+                        echo '...';
+                    }
+
+                    echo '</p>';
+                }
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+
+                // Modal for displaying project details
+                echo '<div class="modal fade" id="project-details-modal-' . $index . '" tabindex="-1" aria-labelledby="project-details-modal-label-' . $index . '" aria-hidden="true">';
+                echo '<div class="modal-dialog modal-dialog-centered">';
+                echo '<div class="modal-content">';
+                echo '<div class="modal-header">';
+                echo '<h5 class="modal-title" id="modal-project-title-' . $index . '">Project details</h5>';
+                echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+                echo '</div>';
+                echo '<div class="modal-body">';
+                echo '<div class="card">';
+                echo '<div class="card-body">';
+                echo "<h5 class='card-title'>$title</h5>"; // Remove the duplicate id="modal-project-title"
+                echo '<p id="modal-project-details-' . $index . '"> ' . $pdetails . '</p>';
+                echo '<div class="stack">';
+                echo '<p class="card-text" id="modal-project-stack-' . $index . '"> ' . $stack . ' </p>';
+                echo '</div>';
+                echo '<hr>';
+                echo '<div class="row">';
+                echo '<div class="col-6">';
+                echo '<p class="text-muted" id="modal-due-date-' . $index . '">Due: ' . $due_date . ' </p>';
+                echo '</div>';
+                echo '<div class="col-6 text-end">';
+                echo '<div class="assignee">';
+                echo '<p id="modal-assignee-' . $index . '" style="display:flex;justify-content:center;align-items:center;padding:8px;"> ' . $assignees . '</p>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+
+                // Display the "Mark Complete" button for logged-in trainees
+                if (in_array('trainee', $user_roles)) {
+                    echo '<div class="modal-footer">';
+                    echo '<button type="button" class="btn btn-success" onclick="markProjectComplete(' . $index . ')">Mark Complete</button>';
+                    echo '</div>';
                 }
 
-                echo '</p>';
-            }
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-
-            // Modal for displaying project details
-            echo '<div class="modal fade" id="project-details-modal-' . $index . '" tabindex="-1" aria-labelledby="project-details-modal-label-' . $index . '" aria-hidden="true">';
-            echo '<div class="modal-dialog modal-dialog-centered">';
-            echo '<div class="modal-content">';
-            echo '<div class="modal-header">';
-            echo '<h5 class="modal-title" id="modal-project-title-' . $index . '">Project details</h5>';
-            echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
-            echo '</div>';
-            echo '<div class="modal-body">';
-            echo '<div class="card">';
-            echo '<div class="card-body">';
-            echo "<h5 class='card-title'>$title</h5>"; // Remove the duplicate id="modal-project-title"
-            echo '<p id="modal-project-details-' . $index . '"> ' . $pdetails . '</p>';
-            echo '<div class="stack">';
-            echo '<p class="card-text" id="modal-project-stack-' . $index . '"> ' . $stack . ' </p>';
-            echo '</div>';
-            echo '<hr>';
-            echo '<div class="row">';
-            echo '<div class="col-6">';
-            echo '<p class="text-muted" id="modal-due-date-' . $index . '">Due: ' . $due_date . ' </p>';
-            echo '</div>';
-            echo '<div class="col-6 text-end">';
-            echo '<div class="assignee">';
-            echo '<p id="modal-assignee-' . $index . '" style="display:flex;justify-content:center;align-items:center;padding:8px;"> ' . $assignees. '</p>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-
-             // Display the "Mark Complete" button for logged-in trainees
-             if (is_user_logged_in() && in_array('trainee', $user_roles)) {
-                echo '<div class="modal-footer">';
-                echo '<button type="button" class="btn btn-success">Mark Complete</button>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
                 echo '</div>';
             }
-
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
         }
 
         echo '</div>';
@@ -120,6 +147,36 @@ get_footer();
 ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function markProjectComplete(index) {
+        const projectId = index;
+        const url = 'http://localhost/easymanage/wp-json/easymanage/v2/project/' + projectId;
+
+        // Disable the button after clicking
+        const button = document.getElementById('mark-complete-button-' + index);
+        button.textContent = 'Completed';
+        button.disabled = true;
+
+        // Make an AJAX PUT request to update the project status
+        fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    is_complete: 1, 
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
 
 <style>
     .main {
@@ -158,6 +215,7 @@ get_footer();
     p {
         font-size: 20px;
     }
+
     .no-projects {
         display: flex;
         color: red;
@@ -169,7 +227,7 @@ get_footer();
 </style>
 
 <script>
-    // JavaScript code for handling modal and card click eventsa
+    // JavaScript code for handling modal and card click events
     document.addEventListener('DOMContentLoaded', function() {
         const cards = document.getElementsByClassName('clickable-card');
 

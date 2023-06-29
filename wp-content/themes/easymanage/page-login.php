@@ -76,7 +76,8 @@ if (isset($_POST['login'])) {
             $error_message = "Invalid user email.";
         } elseif (!wp_check_password($user_password, $user->user_pass, $user->ID)) {
             $error_message = "Invalid password.";
-        } else {
+        } else 
+        {
             $is_deactivated = get_user_meta($user->ID, 'is_deactivated', true);
 
             if ($is_deactivated == 1) {
